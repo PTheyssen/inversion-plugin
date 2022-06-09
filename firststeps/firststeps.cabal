@@ -1,0 +1,25 @@
+cabal-version:       3.0
+
+name:                firststeps
+version:             0.1.0.0
+license:             BSD-3-Clause
+license-file:        LICENSE
+copyright:           (c) 2020-2021, Philipp Theyssen
+author:              Philipp Theyssen
+maintainer:          p.theyssen@gmail.com
+build-type:          Simple
+
+common deps
+  hs-source-dirs:      src
+  default-language:    Haskell2010
+  default-extensions:  TemplateHaskell
+  other-extensions:    NoImplicitPrelude
+  build-depends:
+    base             ^>=4.14.0.0,
+    inversion-plugin -any,
+    template-haskell -any
+
+library
+  import: deps
+  exposed-modules:
+    Inverses
