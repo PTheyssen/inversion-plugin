@@ -5,6 +5,7 @@ module Main where
 import Plugin.InversionPlugin
 
 import Inverses
+import Compression
 
 import Prelude hiding (map, lookup, (++), last, Maybe(..))
 
