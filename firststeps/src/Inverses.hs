@@ -3,22 +3,13 @@
 {-# OPTIONS_GHC -Wno-overlapping-patterns #-}
 module Inverses where
 
-import Prelude hiding ((++), lookup, Maybe(..))
+import Prelude hiding ((++), lookup, Maybe(..), length)
 
 -- type Height = Int
 -- type Velocity = Int
 -- type TimeEnd = Int
 -- type Time = Int
 -- type FallConfig = (Height, Velocity, Time, TimeEnd)
-
-(++) :: [a] -> [a] -> [a]
-[] ++ ys = ys
-(x:xs) ++ ys = x : (xs ++ ys)
-
-is42 :: (Eq a, Num a) => a -> Bool
-is42 42 = True
-is42 _ = False
-
 
 -- free fall function as basic example of physics simulation
 freeFall :: (Int, Int, Int, Int) -> (Int, Int, Int, Int)
