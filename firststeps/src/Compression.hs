@@ -6,8 +6,11 @@ module Compression where
 import Prelude hiding ((++), map, takeWhile, dropWhile, length, head)
 
 --------------------------------------------------------------------------------
--- Version without prelude functions:
+-- Implementing a run length encoder, due to limitations in the inversion
+-- package we cannot use functions from Prelude directly and instead must
+-- implement them in this module
 --------------------------------------------------------------------------------
+
 (++) :: [a] -> [a] -> [a]
 [] ++ ys = ys
 (x:xs) ++ ys = x : (xs ++ ys)
@@ -22,7 +25,7 @@ head [] = error "bad head"
 
 length :: [a] -> Int
 length [] = 0
-length (x:xs) = 1 + (length xs)
+length (_:xs) = 1 + (length xs)
 
 takeWhile               :: (a -> Bool) -> [a] -> [a]
 takeWhile _ []          =  []
@@ -55,3 +58,6 @@ runLengthEncoder xs = mergeLists digits times
     subLists = splitList xs
     digits = map head subLists
     times = map length subLists
+
+
+-- TODO: implement Huffman Tree

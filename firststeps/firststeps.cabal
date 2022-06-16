@@ -22,5 +22,6 @@ common deps
 library
   import: deps
   exposed-modules:
-    Inverses
+    Simulation
     Compression
+    Encryption
