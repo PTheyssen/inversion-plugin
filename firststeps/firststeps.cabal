@@ -17,6 +17,7 @@ common deps
   build-depends:
     base             ^>=4.14.0.0,
     inversion-plugin -any,
+    criterion -any,
     template-haskell -any
 
 library
@@ -26,3 +27,30 @@ library
     Compression
     Encryption
     PartialInverses
+    Main
+
+benchmark benchmarks
+  import:        deps
+  build-depends: criterion
+  main-is:       Bench.hs
+  other-modules:
+    Simulation
+    Compression
+    Encryption
+    PartialInverses
+    Main
+  ghc-options:   -O2
+  type:          exitcode-stdio-1.0
+
+executable benchEx
+  import:        deps
+  build-depends: criterion
+  main-is:       Bench.hs
+  other-modules:
+    Simulation
+    Compression
+    Encryption
+    PartialInverses
+    Main
+  ghc-options:   -O2 -main-is Bench
+  
