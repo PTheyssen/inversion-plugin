@@ -7,7 +7,6 @@ import Main hiding ( main )
 
 main :: IO ()
 main = do
-  putStrLn "Runnnnnnnnnnnning Bench.hs"
   let xs = 0 : map (+5) xs :: [Int]
   let ys = 10 : map (+10) ys :: [Int]
   putStrLn "Benchmarking"

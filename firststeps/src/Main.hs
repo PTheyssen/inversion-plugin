@@ -12,32 +12,43 @@ import Criterion.Types
 
 import Prelude hiding (map, lookup, (++), last)
 
-
--- main :: IO ()
--- main = do
---   putStr $ "Free fall simulation: " ++ (show fallDown) ++ "\n"
---   putStr $ "First 5 inverses found : " ++ (show fallUp) ++ "\n"
---   putStr $ "Compressed data : " ++ (show encoded) ++ "\n"
---   putStr $ "Decompressed data : " ++ (show decoded) ++ "\n"
---   putStr $ "removeAt1 3 [1,2,3,4,5] : " ++ (show removeAt1Example) ++ "\n"
-
 main :: IO ()
 main = do
   putStrLn "Benchmarking automatically generated Inverses"
   defaultMainWith
-    (defaultConfig {reportFile = Just "benchmarks.html"}) $
+    (defaultConfig {reportFile = Just "benchmarks.html",
+                    csvFile = Just "benchmark-inverses.csv"}) $
     [bgroup "removeAt1" [ bench "4 [1,2,3,4,5,6]"
                           $ nf (\x -> take 1 (removeAt1 4 x)) [1,2,3,4,5,6],
                           bench "0 [3,2,1]"
-                          $ nf (\x -> take 1 (removeAt1 0 x)) [3,2,1]
+                          $ nf (\x -> take 1 (removeAt1 0 x)) [3,2,1],
+                          bench "50 [0..300]"
+                          $ nf (\x -> take 1 (removeAt1 50 x)) [0..300]
                         ],
-     bgroup "runLengthDecoder" [ bench "[1,5]"
-                                 $ nf (\x -> take 1 (runLengthDecoder x)) [1,5]
-                               ]
+     bgroup "removeAt1Manual" [ bench "4 [1,2,3,4,5,6]"
+                                $ nf (\x -> removeAt1Manual 4 x) [1,2,3,4,5,6],
+                                bench "0 [3,2,1]"
+                                $ nf (\x -> removeAt1Manual 0 x) [3,2,1],
+                                bench "50 [0..300]"
+                                $ nf (\x -> removeAt1Manual 50 x) [0..300]
+                        ],
+     bgroup "runLengthDecoder" [ bench "[1,5]" $
+                                 nf (\x -> take 1 (runLengthDecoder x)) [1,5],
+                                 bench "[1,5,2,2,3,3]" $
+                                 nf (\x -> take 1 (runLengthDecoder x)) [1,5,2,2,3,3]
+                               ],
+     bgroup "runLengthDecoderManual" [ bench "[1,5]" $
+                                       nf (\x -> runLengthDecoderManual x) [1,5],
+                                       bench "[1,5,2,2,3,3]" $
+                                       nf (\x -> runLengthDecoderManual x)
+                                       [1,5,2,2,3,3]
+                                     ]
     ]
+
 
 split :: [Int] -> [([Int], [Int])]
 split = $(inv '(++))
+
 
 --------------------------------------------------------------------------------
 -- Simulations
@@ -63,10 +74,11 @@ fallUp = take 5 $ freeFallInv fallDown
 runLengthDecoder :: [Int] -> [[Int]]
 runLengthDecoder = $(inv 'runLengthEncoder)
 
-
--- TODO: implement for benchmarking
+-- implemented for benchmarking manual vs automatic generated inverse
 runLengthDecoderManual :: [Int] -> [Int]
-runLengthDecoderManual = undefined
+runLengthDecoderManual [] = []
+runLengthDecoderManual [x] = error "Invalid encoding"
+runLengthDecoderManual (x:(y:ys)) = (take y $ repeat x) ++ runLengthDecoderManual ys
 
 dataToCompress :: [Int]
 dataToCompress = [1,1,1,1,1,1,1,2,2,3,3,3,5]
@@ -85,9 +97,11 @@ decoded = take 1 $ runLengthDecoder encoded
 removeAt1 :: Int -> [Int] -> [(Int, [Int])]
 removeAt1 = $(partialInv 'insertAt [1])
 
--- TODO: implement for benchmarking
+-- implemented for benchmarking manual vs automatic generated inverse
 removeAt1Manual :: Int -> [Int] -> (Int, [Int])
-removeAt1Manual = undefined
+removeAt1Manual _ [] = error "empty list"
+removeAt1Manual 0 (x:xs) = (x, xs)
+removeAt1Manual i (x:xs) = removeAt1Manual (i-1) xs
 
 removeAt1Example :: [(Int, [Int])]
 removeAt1Example = (take 1 (removeAt1 3 [1,2,3,4,5]))
